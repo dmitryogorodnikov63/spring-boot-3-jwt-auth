@@ -27,4 +27,18 @@ public class CookieService {
                 .path("/")
                 .build();
     }
+
+    public HttpCookie createEmptyAccessToken() {
+        return ResponseCookie.from(CookieName.ACCESS_TOKEN_COOKIE_NAME.getName())
+                .httpOnly(true)
+                .path("/")
+                .build();
+    }
+
+    public HttpCookie createEmptyRefreshToken() {
+        return ResponseCookie.from(CookieName.REFRESH_TOKEN_COOKIE_NAME.getName())
+                .httpOnly(true)
+                .path("/")
+                .build();
+    }
 }
