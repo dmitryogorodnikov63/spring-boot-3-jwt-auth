@@ -29,7 +29,6 @@ public class SecurityCipher {
 
     public static String encrypt(String strToEncrypt) {
         if (strToEncrypt == null) return null;
-
         try {
             setKey();
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -44,7 +43,6 @@ public class SecurityCipher {
 
     public static String decrypt(String strToDecrypt) {
         if (strToDecrypt == null) return null;
-
         try {
             setKey();
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");

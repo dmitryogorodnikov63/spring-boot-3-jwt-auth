@@ -14,13 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.authservice.Auth.service.service.CookieService;
 import ru.authservice.Auth.service.service.JwtTokenService;
-import ru.authservice.Auth.service.util.SecurityCipher;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import static ru.authservice.Auth.service.enums.CookieName.ACCESS_TOKEN_COOKIE_NAME;
 
 @Slf4j
 public class AuthFilter extends OncePerRequestFilter {
@@ -31,12 +28,15 @@ public class AuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private CookieService cookieService;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
             FilterChain filterChain) throws ServletException, IOException {
-        var optionalJwt = getJwtFromCookie(httpServletRequest);
+        var optionalJwt = cookieService.getJwtFromCookie(httpServletRequest);
         try {
             if (optionalJwt.isPresent()
                     && StringUtils.hasText(optionalJwt.get())
@@ -53,17 +53,5 @@ public class AuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    private Optional<String> getJwtFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return Optional.empty();
-        for (Cookie cookie : cookies) {
-            if (ACCESS_TOKEN_COOKIE_NAME.getName().equals(cookie.getName())) {
-                var accessToken = cookie.getValue();
-                if (accessToken == null) return Optional.empty();
 
-                return Optional.of(SecurityCipher.decrypt(accessToken));
-            }
-        }
-        return Optional.empty();
-    }
 }

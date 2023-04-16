@@ -21,12 +21,14 @@ public class AuthService {
         var user = userService.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email " + email));
 
-        var responseHeaders = new HttpHeaders();
         var newAccessToken = tokenProvider.generateAccessToken(user.getEmail());
         var newRefreshToken = tokenProvider.generateRefreshToken(user.getEmail());
-        addAccessTokenCookie(responseHeaders, newAccessToken);
-        addRefreshTokenCookie(responseHeaders, newRefreshToken);
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        return ResponseEntity.ok()
+                .headers(cookieService.generateAuthCookie(
+                        newAccessToken,
+                        newRefreshToken
+                ))
+                .build();
     }
 
     public ResponseEntity<?> refresh(String refreshToken) {
@@ -37,39 +39,22 @@ public class AuthService {
         var currentUserEmail = tokenProvider.getSubjectFromToken(refreshToken);
 
         var newAccessToken = tokenProvider.generateAccessToken(currentUserEmail);
-        var responseHeaders = new HttpHeaders();
-        addAccessTokenCookie(responseHeaders, newAccessToken);
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        var newRefreshToken = tokenProvider.generateRefreshToken(currentUserEmail);
+
+        return ResponseEntity.ok()
+                .headers(cookieService.generateAuthCookie(
+                        newAccessToken,
+                        newRefreshToken
+                ))
+                .build();
     }
 
     public ResponseEntity<?> logout() {
-        var responseHeaders = new HttpHeaders();
-        cleanAccessTokenCookie(responseHeaders);
-        cleanRefreshTokenCookie(responseHeaders);
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        return ResponseEntity.ok()
+                .headers(cookieService.generateEmptyAuthCookie())
+                .build();
     }
 
-    private void addAccessTokenCookie(HttpHeaders httpHeaders, Token token) {
-        httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieService.createAccessTokenCookie(token)
-                        .toString());
-    }
 
-    private void addRefreshTokenCookie(HttpHeaders httpHeaders, Token token) {
-        httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieService.createRefreshTokenCookie(token)
-                        .toString());
-    }
 
-    private void cleanRefreshTokenCookie(HttpHeaders httpHeaders) {
-        httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieService.createEmptyRefreshToken()
-                        .toString());
-    }
-
-    private void cleanAccessTokenCookie(HttpHeaders httpHeaders) {
-        httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieService.createEmptyAccessToken()
-                        .toString());
-    }
 }
