@@ -59,7 +59,7 @@ public class CookieService {
         return ResponseCookie.from(CookieName.ACCESS_TOKEN_COOKIE_NAME.getName(), encryptedToken)
                 .maxAge(token.getDuration())
                 .httpOnly(true)
-                .path("/")
+                .domain("localhost")
                 .build();
     }
 
@@ -68,7 +68,8 @@ public class CookieService {
         return ResponseCookie.from(CookieName.REFRESH_TOKEN_COOKIE_NAME.getName(), encryptedToken)
                 .maxAge(token.getDuration())
                 .httpOnly(true)
-                .path("/")
+                .domain("localhost")
+                .secure(false)
                 .build();
     }
 
@@ -76,6 +77,7 @@ public class CookieService {
         return ResponseCookie.from(CookieName.ACCESS_TOKEN_COOKIE_NAME.getName())
                 .httpOnly(true)
                 .path("/")
+                .secure(false)
                 .build();
     }
 

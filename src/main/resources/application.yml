@@ -1,12 +1,14 @@
 server:
+  port: 8080
   servlet:
     context-path: /api/
 
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/test
+    url: jdbc:postgresql://localhost:5432/auth
     username: postgres
-    password: 1234
+    password: 1123
   liquibase:
     change-log: classpath:db/db.changelog-root.xml
     enabled: true

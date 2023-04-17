@@ -17,16 +17,16 @@ import ru.authservice.Auth.service.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/registration")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
     private final UserService userService;
 
-    @PostMapping(value = "/registration")
+    @PostMapping(value = "/user")
     public ResponseEntity<?> registrationUser(@Valid @RequestBody RegistrationRequest request) {
-        registrationService.registration(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .body(registrationService.registration(request));
     }
 
     @PostMapping(value = "/exist/username")
