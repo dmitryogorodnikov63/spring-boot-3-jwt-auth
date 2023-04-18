@@ -57,19 +57,22 @@ public class CookieService {
     private HttpCookie createAccessTokenCookie(Token token) {
         String encryptedToken = SecurityCipher.encrypt(token.getTokenValue());
         return ResponseCookie.from(CookieName.ACCESS_TOKEN_COOKIE_NAME.getName(), encryptedToken)
-                .maxAge(token.getDuration())
+                .maxAge(token.getDuration() + 86400000)
                 .httpOnly(true)
-                .domain("localhost")
+                .path("/")
+                .sameSite("None")
+                .secure(true)
                 .build();
     }
 
     private HttpCookie createRefreshTokenCookie(Token token) {
         String encryptedToken = SecurityCipher.encrypt(token.getTokenValue());
         return ResponseCookie.from(CookieName.REFRESH_TOKEN_COOKIE_NAME.getName(), encryptedToken)
-                .maxAge(token.getDuration())
+                .maxAge(token.getDuration() + 86400000)
                 .httpOnly(true)
-                .domain("localhost")
-                .secure(false)
+                .path("/")
+                .sameSite("None")
+                .secure(true)
                 .build();
     }
 
@@ -77,7 +80,8 @@ public class CookieService {
         return ResponseCookie.from(CookieName.ACCESS_TOKEN_COOKIE_NAME.getName())
                 .httpOnly(true)
                 .path("/")
-                .secure(false)
+                .sameSite("None")
+                .secure(true)
                 .build();
     }
 
@@ -85,6 +89,8 @@ public class CookieService {
         return ResponseCookie.from(CookieName.REFRESH_TOKEN_COOKIE_NAME.getName())
                 .httpOnly(true)
                 .path("/")
+                .sameSite("None")
+                .secure(true)
                 .build();
     }
 }

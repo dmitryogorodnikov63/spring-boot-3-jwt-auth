@@ -35,6 +35,7 @@ public class AuthController {
         return authService.login(loginRequest);
     }
 
+
     @PostMapping(value = "/refresh")
     public ResponseEntity<?> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) {
         String decryptedRefreshToken = SecurityCipher.decrypt(refreshToken);
